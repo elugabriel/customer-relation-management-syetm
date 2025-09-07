@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+  <!-- Welcome Banner -->
+  <div class="row mb-4">
+    <div class="col">
+      <h2 class="fw-bold">Welcome, {{ session.username }} 👋</h2>
+      <p class="text-muted">Here’s a summary of your activities.</p>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card text-bg-primary shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Total Transactions</h5>
+          <h2>{{ total_transactions or "0" }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-bg-warning shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Pending Feedbacks</h5>
+          <h2>{{ pending_feedbacks or "0" }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-bg-success shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Upcoming Reminders</h5>
+          <h2>{{ upcoming_reminders or "0" }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="row mb-4">
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">Recent Transactions</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Transaction ID</th>
+                <th>Amount</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for tx in transactions %}
+              <tr>
+                <td>{{ tx.id }}</td>
+                <td>{{ tx.amount }}</td>
+                <td>{{ tx.type }}</td>
+                <td>{{ tx.status }}</td>
+                <td>{{ tx.created_at }}</td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="5" class="text-center text-muted">No transactions yet.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback / Updates -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Recent Updates</h5>
+        </div>
+        <div class="card-body">
+          <ul>
+            {% for update in updates %}
+            <li>{{ update.message }} <small class="text-muted">({{ update.created_at }})</small></li>
+            {% else %}
+            <li class="text-muted">No updates available.</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0">Feedback / Support</h5>
+        </div>
+        <div class="card-body">
+          <a href="{{ url_for('dashboard.feedbacks') }}" class="btn btn-primary w-100">Submit Feedback</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

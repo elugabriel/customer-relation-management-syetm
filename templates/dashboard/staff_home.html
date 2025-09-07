@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+  <!-- Welcome Banner -->
+  <div class="row mb-4">
+    <div class="col">
+      <h2 class="fw-bold">Welcome, {{ session.username }} 👋</h2>
+      <p class="text-muted">Here’s an overview of your activities today.</p>
+    </div>
+  </div>
+
+  <!-- Quick Stats Section -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card text-bg-success shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Total Customers</h5>
+          <h2>{{ total_customers or "0" }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-bg-warning shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Sales Made</h5>
+          <h2>{{ total_sales or "0" }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-bg-info shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Reminders Due</h5>
+          <h2>{{ reminders_due or "0" }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manage Customers Info -->
+  <div class="row mb-4">
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Customer Management</h5>
+        </div>
+        <div class="card-body">
+          <p>You can view and update customer information assigned to you. Deleting customers is restricted.</p>
+          <a href="{{ url_for('dashboard.manage_customers') }}" class="btn btn-primary">Manage Customers</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Track Sales & Reminders -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">Track Sales</h5>
+        </div>
+        <div class="card-body">
+          <p>Record new sales and view past transactions assigned to you.</p>
+          <a href="{{ url_for('dashboard.track_sales') }}" class="btn btn-success">View Sales</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">Schedule Reminders</h5>
+        </div>
+        <div class="card-body">
+          <p>Set follow-ups with customers to maintain engagement.</p>
+          <a href="{{ url_for('dashboard.schedule_reminder') }}" class="btn btn-info">Manage Reminders</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reports Section -->
+  <div class="row mb-4">
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">Reports</h5>
+        </div>
+        <div class="card-body">
+          <p>Generate reports only for your own activities.</p>
+          <a href="{{ url_for('dashboard.generate_report') }}" class="btn btn-secondary">Generate Reports</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

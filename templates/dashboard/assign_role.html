@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Assign Role</h2>
+    <p class="text-muted">Update roles for admins, staff, and customers.</p>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Current Role</th>
+                <th>Assign New Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('dashboard.assign_role') }}">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <input type="hidden" name="user_type" value="{{ user.user_type }}">
+                        <select name="role" class="form-select form-select-sm d-inline w-auto">
+                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                            <option value="staff" {% if user.role == 'staff' %}selected{% endif %}>Staff</option>
+                            <option value="customer" {% if user.role == 'customer' %}selected{% endif %}>Customer</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>👑 Admin Dashboard</h2>
+    <p>Welcome, {{ session.username }}!</p>
+
+    <ul>
+        <li><a href="#">Manage Staff</a></li>
+        <li><a href="#">View Reports</a></li>
+        <li><a href="#">System Settings</a></li>
+    </ul>
+
+    <a href="{{ url_for('auth.logout') }}">Logout</a>
+</div>
+{% endblock %}

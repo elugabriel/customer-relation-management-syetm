@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>📅 Schedule Reminder</h3>
+        <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary">⬅ Back to Dashboard</a>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Add Reminder Form -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white"><strong>New Reminder</strong></div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('dashboard.schedule_reminder') }}">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">Customer (optional)</label>
+                        <select name="customer_id" class="form-control">
+                            <option value="">-- None --</option>
+                            {% for customer in customers %}
+                                <option value="{{ customer.id }}">{{ customer.fullname }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" name="description" rows="2"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Reminder Date</label>
+                    <input type="date" class="form-control" name="reminder_date" required>
+                </div>
+                <button type="submit" class="btn btn-success">➕ Add Reminder</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reminders Table -->
+    <div class="card">
+        <div class="card-header bg-dark text-white"><strong>Scheduled Reminders</strong></div>
+        <div class="card-body">
+            {% if reminders %}
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reminder in reminders %}
+                    <tr>
+                        <td>{{ reminder.id }}</td>
+                        <td>{{ reminder.fullname or "General" }}</td>
+                        <td>{{ reminder.title }}</td>
+                        <td>{{ reminder.description }}</td>
+                        <td>{{ reminder.reminder_date }}</td>
+                        <td>
+                            {% if reminder.status == "pending" %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% else %}
+                                <span class="badge bg-success">Completed</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if reminder.status == "pending" %}
+                                <a href="{{ url_for('dashboard.complete_reminder', reminder_id=reminder.id) }}" class="btn btn-sm btn-success">✔ Done</a>
+                            {% endif %}
+                            <a href="{{ url_for('dashboard.delete_reminder', reminder_id=reminder.id) }}" class="btn btn-sm btn-danger"
+                               onclick="return confirm('Delete this reminder?');">🗑 Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-muted">No reminders scheduled yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

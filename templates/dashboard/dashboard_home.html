@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+  <!-- Welcome Banner -->
+  <div class="row mb-4">
+    <div class="col">
+      <h2 class="fw-bold">Welcome, {{ session.username }} 👋</h2>
+      <p class="text-muted">Here’s an overview of the CRM system today.</p>
+    </div>
+  </div>
+
+  <!-- Quick Stats Section -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card text-bg-primary shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Total Staff</h5>
+          <h2>{{ total_staff or "0" }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-success shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Total Customers</h5>
+          <h2>{{ total_customers or "0" }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-warning shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Total Leads</h5>
+          <h2>{{ total_leads or "0" }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-danger shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Pending Feedback</h5>
+          <h2>{{ pending_feedback or "0" }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- General Information Section -->
+  <div class="row mb-4">
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">General Information</h5>
+        </div>
+        <div class="card-body">
+          <p>Welcome to the CRM system. Here you can manage staff, monitor system activities, handle customer accounts, and generate reports. 
+             Use the sidebar to navigate through different features.</p>
+          <ul>
+            <li>Stay updated with customer activities</li>
+            <li>Track system usage and logs</li>
+            <li>Generate detailed reports for management</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity Logs -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">Recent Activity Logs</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Actor</th>
+                <th>Action</th>
+                <th>Details</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for log in recent_logs %}
+              <tr>
+                <td>{{ log.actor_type }} (ID: {{ log.actor_id }})</td>
+                <td>{{ log.action }}</td>
+                <td>{{ log.details }}</td>
+                <td>{{ log.timestamp }}</td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="4" class="text-center text-muted">No recent activities.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

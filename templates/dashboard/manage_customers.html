@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Manage Customers</h3>
+        <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary">⬅ Back to Dashboard</a>
+    </div>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Add Customer Form -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <strong>Add New Customer</strong>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('dashboard.manage_customers') }}">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="fullname" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" name="fullname" required>
+                    </div>
+                    <div class="col">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+                    <div class="col">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="text" class="form-control" name="phone">
+                    </div>
+                    <div class="col">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" name="address">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="gender" class="form-label">Gender</label>
+                        <select class="form-control" name="gender">
+                            <option value="">-- Select --</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="occupation" class="form-label">Occupation</label>
+                        <input type="text" class="form-control" name="occupation">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Notes</label>
+                    <textarea class="form-control" name="notes" rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">➕ Add Customer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Customers Table -->
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <strong>Customer List</strong>
+        </div>
+        <div class="card-body">
+            {% if customers %}
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Full Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Gender</th>
+                        <th>Occupation</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                    <tr>
+                        <td>{{ customer.id }}</td>
+                        <td>{{ customer.fullname }}</td>
+                        <td>{{ customer.username }}</td>
+                        <td>{{ customer.email }}</td>
+                        <td>{{ customer.phone }}</td>
+                        <td>{{ customer.address }}</td>
+                        <td>{{ customer.gender }}</td>
+                        <td>{{ customer.occupation }}</td>
+                        <td>{{ customer.created_at }}</td>
+                        <td>
+                            <a href="{{ url_for('dashboard.edit_customer', customer_id=customer.id) }}" class="btn btn-sm btn-warning">✏ Edit</a>
+                            <a href="{{ url_for('dashboard.delete_customer', customer_id=customer.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this customer?');">🗑 Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-muted">No customers found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

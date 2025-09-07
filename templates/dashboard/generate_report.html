@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>📊 Generate Reports</h3>
+        <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary">⬅ Back to Dashboard</a>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Report Selection -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white"><strong>Generate New Report</strong></div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('dashboard.generate_report') }}">
+                <div class="mb-3">
+                    <label class="form-label">Select Report Type</label>
+                    <select class="form-control" name="report_type" required>
+                        <option value="">-- Choose Report --</option>
+                        <option value="customers">Customer Report</option>
+                        <option value="users">User Report</option>
+                        <option value="sales">Sales Report</option>
+                        <option value="reminders">Reminder Report</option>
+                        <option value="transactions">Transaction Report</option>
+                    </select>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">From Date</label>
+                        <input type="date" class="form-control" name="start_date">
+                    </div>
+                    <div class="col">
+                        <label class="form-label">To Date</label>
+                        <input type="date" class="form-control" name="end_date">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">📄 Generate</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Report Preview -->
+    {% if report_data %}
+    <div class="card">
+        <div class="card-header bg-dark text-white"><strong>Report Preview: {{ report_type|capitalize }}</strong></div>
+        <div class="card-body">
+            {% if report_data %}
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        {% for col in report_data[0].keys() %}
+                        <th>{{ col|capitalize }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in report_data %}
+                    <tr>
+                        {% for value in row.values() %}
+                        <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{{ url_for('dashboard.download_report', report_type=report_type) }}" class="btn btn-primary">⬇ Download CSV</a>
+            {% else %}
+            <p class="text-muted">No data found for this report.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

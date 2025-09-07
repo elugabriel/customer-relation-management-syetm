@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CRM System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    .wrapper {
+      display: flex;
+      flex: 1;
+    }
+    .sidebar {
+      width: 240px;
+      background: #343a40;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .sidebar h5 {
+      color: #f8f9fa;
+      margin-bottom: 1rem;
+    }
+    .sidebar .nav-link {
+      color: #adb5bd;
+      border-radius: 4px;
+      margin-bottom: 5px;
+      padding: 8px 12px;
+    }
+    .sidebar .nav-link.active,
+    .sidebar .nav-link:hover {
+      color: #fff;
+      background-color: #495057;
+    }
+    .content {
+      flex-grow: 1;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navbar -->
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">CRM</a>
+      <div>
+        {% if session.get('username') %}
+          <span class="text-light me-3">
+            Hello, {{ session.username }} ({{ session.role|capitalize }})
+          </span>
+          <a class="btn btn-outline-light btn-sm" href="{{ url_for('auth.logout') }}">Logout</a>
+        {% else %}
+          <a class="btn btn-outline-light btn-sm" href="{{ url_for('auth.login') }}">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Sidebar + Main Content -->
+  <div class="wrapper">
+    <div class="sidebar p-3">
+      {% if session.get('role') %}
+      <h5>
+        <a href="{{ url_for('dashboard.dashboard') }}" class="text-decoration-none">
+          {{ session.role|capitalize }} Menu
+        </a>
+      </h5>
+      
+      {% else %}
+        <h5>Menu</h5>
+      {% endif %}
+    
+      <ul class="nav flex-column">
+        {% if session.get('role') == 'admin' %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.manage_users') }}">Manage User Account</a></li>
+          <!-- <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.update_system') }}"></a></li> -->
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.assign_role') }}">Assign Role</a></li>
+          <!-- <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.monitor_system') }}"></a></li> -->
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.manage_customers') }}">Manage Customer Account</a></li>
+          <!-- <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.register_customer') }}">Register Customer</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.update_customer_profile') }}">Update Customer Profile</a></li> -->
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.track_sales') }}">Track Sales</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.schedule_reminder') }}">Schedule Reminder</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.generate_report') }}">Generate Report</a></li>
+    
+        {% elif session.get('role') == 'staff' %}
+          <li class="nav-item"><a class="nav-link" href="#"></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"></a></li>
+          <li class="nav-item mt-3"><a class="nav-link text-danger" href="{{ url_for('auth.logout') }}"></a></li>
+    
+        {% elif session.get('role') == 'customer' %}
+          <li class="nav-item"><a class="nav-link" href="#">Provide Feedbacks</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">View Updates</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Perform Transaction</a></li>
+          <li class="nav-item mt-3"><a class="nav-link text-danger" href="{{ url_for('auth.logout') }}">Logout</a></li>
+        {% endif %}
+      </ul>
+    </div>
+    
+
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
