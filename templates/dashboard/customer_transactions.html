@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row mb-4">
+    <div class="col">
+      <h2 class="fw-bold">Transactions</h2>
+      <p class="text-muted">Manage your transactions and view past purchases.</p>
+    </div>
+  </div>
+
+  <!-- Transaction Form -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">New Transaction</h5>
+        </div>
+        <div class="card-body">
+          <form method="POST">
+            <div class="mb-3">
+              <label for="amount" class="form-label">Amount</label>
+              <input type="text" class="form-control" id="amount" name="amount" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="type" class="form-label">Select Product</label>
+              <select class="form-select" id="type" name="type" required>
+                <option value="" selected disabled>Choose product</option>
+                {% for product in products %}
+                  <option value="{{ product }}">{{ product }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Transaction</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Past Transactions Table -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">Past Transactions</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for txn in transactions %}
+                <tr>
+                  <td>{{ txn.type }}</td>
+                  <td>{{ txn.amount }}</td>
+                  <td>{{ txn.status }}</td>
+                  <td>{{ txn.created_at }}</td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="4" class="text-center text-muted">No transactions yet.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

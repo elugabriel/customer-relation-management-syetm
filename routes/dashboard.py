@@ -129,10 +129,10 @@ def track_sales():
 
 # ========================
 # Customer Pages
-# ========================
-@dashboard_bp.route("/feedbacks")
-def feedbacks():
-    return render_template("dashboard/feedbacks.html")
+# # ========================
+# @dashboard_bp.route("/feedbacks")
+# def feedbacks():
+#     return render_template("dashboard/feedbacks.html")
 
 
 @dashboard_bp.route("/updates")
@@ -140,9 +140,9 @@ def updates():
     return render_template("dashboard/updates.html")
 
 
-@dashboard_bp.route("/transactions")
-def transactions():
-    return render_template("dashboard/transactions.html")
+# @dashboard_bp.route("/transactions")
+# def transactions():
+#     return render_template("dashboard/transactions.html")
 
 
 # ---------------------------
@@ -583,3 +583,78 @@ def download_report(report_type):
         mimetype="text/csv",
         headers={"Content-Disposition": f"attachment;filename={report_type}_report.csv"}
     )
+
+
+@dashboard_bp.route("/feedbacks", methods=["GET", "POST"])
+def feedbacks():
+    # Ensure only customers can access
+    if session.get("role") != "customer":
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("dashboard.dashboard"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        message = request.form.get("message")
+        customer_id = session.get("user_id")
+
+        cursor.execute("""
+            INSERT INTO feedback (customer_id, message, status, handled_by, created_at)
+            VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+        """, (customer_id, message, "pending", None))
+        conn.commit()
+        flash("Feedback submitted successfully!", "success")
+
+    # Fetch past feedbacks for this customer
+    feedbacks = cursor.execute("""
+        SELECT message, status, handled_by, created_at
+        FROM feedback
+        WHERE customer_id=?
+        ORDER BY created_at DESC
+    """, (session.get("user_id"),)).fetchall()
+
+    conn.close()
+    return render_template("dashboard/customer_feedback.html", feedbacks=feedbacks)
+
+
+
+@dashboard_bp.route("/transactions", methods=["GET", "POST"])
+def transactions():
+    if session.get("role") != "customer":
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("dashboard.dashboard"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    customer_id = session.get("user_id")
+
+    # Example products for dropdown
+    products = ["Product A", "Product B", "Product C", "Product D"]
+
+    if request.method == "POST":
+        amount = request.form.get("amount")
+        product_type = request.form.get("type")  # selected product
+
+        if not amount or not amount.replace(".", "", 1).isdigit():
+            flash("Please enter a valid amount.", "danger")
+        elif product_type not in products:
+            flash("Invalid product selected.", "danger")
+        else:
+            cursor.execute("""
+                INSERT INTO transactions (customer_id, amount, status, type, created_at)
+                VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+            """, (customer_id, float(amount), "pending", product_type))
+            conn.commit()
+            flash("Transaction submitted successfully!", "success")
+
+    # Fetch past transactions
+    transactions = cursor.execute("""
+        SELECT amount, status, type, created_at
+        FROM transactions
+        WHERE customer_id=?
+        ORDER BY created_at DESC
+    """, (customer_id,)).fetchall()
+
+    conn.close()
+    return render_template("dashboard/customer_transactions.html", transactions=transactions, products=products)
